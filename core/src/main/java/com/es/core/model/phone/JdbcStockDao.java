@@ -1,8 +1,7 @@
 package com.es.core.model.phone;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -14,11 +13,6 @@ public class JdbcStockDao implements StockDao {
 
     @Override
     public Stock getCountInStock(Long key) {
-        return jdbcTemplate.queryForObject("select * from stocks where phoneId = " + key, Stock.class);
-    }
-
-    @Override
-    public void addPhoneInStock(Long key, Integer stock, Integer reserved) {
-        jdbcTemplate.update("insert into stocks (phoneId, stock, reserved) values (?, ?, ?)", key, stock, reserved);
+        return (Stock) jdbcTemplate.queryForObject("select * from stocks inner join phones on stocks.phoneId = phones.id where phones.Id = " + key, new BeanPropertyRowMapper(Stock.class));
     }
 }
