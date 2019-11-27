@@ -32,7 +32,11 @@ public class JdbcPhoneDao implements PhoneDao{
             ":ramGb, :internalStorageGb, :batteryCapacityMah, :talkTimeHours, :standByTimeHours, :bluetooth, :positioning, :imageUrl, :description)";
 
     public Optional<Phone> get(final Long key) {
-        Phone phone = (Phone) jdbcTemplate.query("select * from phones where id = " + key, new BeanPropertyRowMapper(Phone.class));
+        Phone phone = (Phone) jdbcTemplate.queryForObject("select * from phones where id = " + key, new BeanPropertyRowMapper(Phone.class));
+        Optional<Phone> optionalPhone = Optional.of(phone);
+        if(optionalPhone.isPresent()){
+            return Optional.empty();
+        }
         phone.setColors(colorDao.get(key));
         return Optional.of(phone);
     }
