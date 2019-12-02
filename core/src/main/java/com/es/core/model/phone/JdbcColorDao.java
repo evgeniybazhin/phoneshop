@@ -19,36 +19,36 @@ public class JdbcColorDao implements ColorDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_SAVE_COLOR = "insert into colors (code) values (?)";
+    private static final String SQL_SAVE_COLORS = "insert into phone2color (phoneId, colorId) values (?, ?)";
+    private static final String SQL_FIND_ALL = "select * from colors";
+    private static final String SQL_GET_COLOR = "select * from colors inner join phone2color on phone2color.colorId = colors.id where phone2color.phoneId = ";
 
     @Override
     public Set<Color> get(Long key) {
-        return new HashSet<Color>((Collection<? extends Color>) jdbcTemplate.query("select * from colors inner join phone2color on phone2color.colorId = colors.id where phone2color.phoneId = " + key,
-                                  new BeanPropertyRowMapper(Color.class)));
+        return new HashSet<Color>((Collection<? extends Color>) jdbcTemplate.query(SQL_GET_COLOR + key,
+                new BeanPropertyRowMapper(Color.class)));
     }
 
     @Override
     public void save(Color color) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(new PreparedStatementCreator() {
-            @Override
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(SQL_SAVE_COLOR);
-                ps.setString(1, color.getCode());
-                return ps;
-            }
-        },keyHolder);
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(SQL_SAVE_COLOR);
+            ps.setString(1, color.getCode());
+            return ps;
+        }, keyHolder);
     }
 
     @Override
     public void save(Set<Color> colors, Long key) {
-        for(Color color : colors){
+        for (Color color : colors) {
             save(color);
-            jdbcTemplate.update("insert into phone2color (phoneId, colorId) values (?, ?)", key, color.getId());
+            jdbcTemplate.update(SQL_SAVE_COLORS, key, color.getId());
         }
     }
 
     @Override
     public List<Color> findAll() {
-        return jdbcTemplate.query("select * from colors", new BeanPropertyRowMapper(Color.class));
+        return jdbcTemplate.query(SQL_FIND_ALL, new BeanPropertyRowMapper(Color.class));
     }
 }

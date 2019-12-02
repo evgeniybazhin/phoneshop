@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class JdbcPhoneDao implements PhoneDao{
+public class JdbcPhoneDao implements PhoneDao {
     @Resource
     private JdbcTemplate jdbcTemplate;
     @Resource
@@ -24,21 +24,19 @@ public class JdbcPhoneDao implements PhoneDao{
     @Autowired
     private ColorDao colorDao;
 
-    private String SQL_SAVE_PHONE = "insert into phones (brand, model, price, displaySizeInches, weightGr, lengthMm, widthMm, heightMm," +
+    private static final String SQL_SAVE_PHONE = "insert into phones (brand, model, price, displaySizeInches, weightGr, lengthMm, widthMm, heightMm," +
             "announced, deviceType, os, displayResolution, pixelDensity, displayTechnology, backCameraMegapixels, frontCameraMegapixels," +
             "ramGb, internalStorageGb, batteryCapacityMah, talkTimeHours, standByTimeHours, bluetooth, positioning, imageUrl, description) " +
             "values (:brand, :model, :price, :displaySizeInches, :weightGr, :lengthMm, :widthMm, :heightMm," +
             ":announced, :deviceType, :os, :displayResolution, :pixelDensity, :displayTechnology, :backCameraMegapixels, :frontCameraMegapixels," +
             ":ramGb, :internalStorageGb, :batteryCapacityMah, :talkTimeHours, :standByTimeHours, :bluetooth, :positioning, :imageUrl, :description)";
+    private static final String SQL_GET_PHONE = "select * from phones where id = ";
 
     public Optional<Phone> get(final Long key) {
-        Phone phone = (Phone) jdbcTemplate.queryForObject("select * from phones where id = " + key, new BeanPropertyRowMapper(Phone.class));
-        Optional<Phone> optionalPhone = Optional.of(phone);
-        if(optionalPhone.isPresent()){
-            return Optional.empty();
-        }
-        phone.setColors(colorDao.get(key));
-        return Optional.of(phone);
+        Phone phone = (Phone) jdbcTemplate.queryForObject(SQL_GET_PHONE + key, new BeanPropertyRowMapper(Phone.class));
+        Optional<Phone> optionalPhone = Optional.ofNullable(phone);
+        optionalPhone.ifPresent(phone1 -> phone.setColors(colorDao.get(key)));
+        return optionalPhone;
     }
 
     public void save(final Phone phone) {
@@ -50,8 +48,8 @@ public class JdbcPhoneDao implements PhoneDao{
 
     public List<Phone> findAll(int offset, int limit) {
         List<Phone> phones = (List<Phone>) jdbcTemplate.query("select * from phones offset " + offset + " limit " + limit, new BeanPropertyRowMapper(Phone.class));
-        for(Phone phone : phones){
-            phone.setColors(colorDao.get(phone.getId()));
+        if(phones != null){
+            phones.forEach(phone -> phone.setColors(colorDao.get(phone.getId())));
         }
         return phones;
     }
