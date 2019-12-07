@@ -31,6 +31,7 @@ public class JdbcPhoneDao implements PhoneDao {
             ":announced, :deviceType, :os, :displayResolution, :pixelDensity, :displayTechnology, :backCameraMegapixels, :frontCameraMegapixels," +
             ":ramGb, :internalStorageGb, :batteryCapacityMah, :talkTimeHours, :standByTimeHours, :bluetooth, :positioning, :imageUrl, :description)";
     private static final String SQL_GET_PHONE = "select * from phones where id = ";
+    private static final String SQL_GET_COUNT = "select count(*) from phones";
 
     public Optional<Phone> get(final Long key) {
         Phone phone = (Phone) jdbcTemplate.queryForObject(SQL_GET_PHONE + key, new BeanPropertyRowMapper(Phone.class));
@@ -52,5 +53,10 @@ public class JdbcPhoneDao implements PhoneDao {
             phones.forEach(phone -> phone.setColors(colorDao.get(phone.getId())));
         }
         return phones;
+    }
+
+    @Override
+    public Integer getCount() {
+        return jdbcTemplate.queryForObject(SQL_GET_COUNT, Integer.class);
     }
 }

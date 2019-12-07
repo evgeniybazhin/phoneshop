@@ -33,4 +33,10 @@ public class JdbcPhoneDaoTest {
         List<Phone> phones = phoneDao.findAll(offset, limit);
         assertNotNull(phones);
     }
+
+    @Test
+    public void getCountPhones(){
+        int count = phoneDao.getCount();
+        assertNotNull(count);
+    }
 }
