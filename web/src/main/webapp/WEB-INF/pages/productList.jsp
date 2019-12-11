@@ -1,3 +1,4 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Product List</title>
@@ -50,7 +51,7 @@
                 <td style="vertical-align: middle!important"><c:out value="${phone.brand}"/></td>
                 <td style="vertical-align: middle!important"><c:out value="${phone.model}"/></td>
                 <td style="vertical-align: middle!important">
-                    <c:forEach items="${phone.colors}">
+                    <c:forEach items="${phone.colors}" var="color">
                         <c:out value="${color.code}"/>
                     </c:forEach></td>
                 <td style="vertical-align: middle!important"><c:out value="${phone.displaySizeInches}''"/></td>
