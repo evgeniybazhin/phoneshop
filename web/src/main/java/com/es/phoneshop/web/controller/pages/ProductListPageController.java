@@ -20,13 +20,16 @@ public class ProductListPageController {
     private PhoneDao phoneDao;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showProductList(@RequestParam(value = "page", required = false, defaultValue = "1") int page, Model model) {
+    public String showProductList(@RequestParam(value = "search", required = false) String search,
+                                  @RequestParam(value = "sortBy", required = false) String sortBy,
+                                  @RequestParam(value = "page", defaultValue = "1") int page, Model model) {
         int total = phoneDao.getCount();
+
         int pagesTotal = total / 10 + 1;
         if (page > pagesTotal || page <= 0)
             throw new RuntimeException();
         int firstIndex = (page - 1) * 10;
-        List<Phone> phoneList = phoneDao.findAll(firstIndex, 10);
+        List<Phone> phoneList = phoneDao.findAll(firstIndex, 10, search, sortBy);
         model.addAttribute("currentPage", page);
         model.addAttribute("pagesTotal", pagesTotal);
         model.addAttribute("phones", phoneList);

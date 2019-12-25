@@ -47,12 +47,24 @@ public class JdbcPhoneDao implements PhoneDao {
         colorDao.save(phone.getColors(), keyHolder.getKey().longValue());
     }
 
-    public List<Phone> findAll(int offset, int limit) {
-        List<Phone> phones = (List<Phone>) jdbcTemplate.query("select * from phones offset " + offset + " limit " + limit, new BeanPropertyRowMapper(Phone.class));
+    public List<Phone> findAll(int offset, int limit, String search, String sortBy) {
+        List<Phone> phones = (List<Phone>) jdbcTemplate.query("select * from phones" + searchQuery(search) + sortQuery(sortBy) + " offset " + offset +" limit " + limit, new BeanPropertyRowMapper(Phone.class));
         if(phones != null){
             phones.forEach(phone -> phone.setColors(colorDao.get(phone.getId())));
         }
         return phones;
+    }
+
+    private String searchQuery(String search){
+        return search == null || search.equals("")  ? "" : " where (UPPER(model) LIKE '%" + search.toUpperCase() + "%' OR UPPER(brand) LIKE '%" + search.toUpperCase() + "%')";
+    }
+
+    private String sortQuery(String sortBy){
+        String[] array = new String[0];
+        if(sortBy != null && !sortBy.equals("")){
+            array = sortBy.split("_");
+        }
+        return sortBy == null || sortBy.equals("") ? "" : " ORDER BY " + array[0].toUpperCase() + " " + array[1].toUpperCase();
     }
 
     @Override
