@@ -1,6 +1,7 @@
 package com.es.core.model.phone;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -33,11 +34,16 @@ public class JdbcPhoneDao implements PhoneDao {
     private static final String SQL_GET_PHONE = "select * from phones where id = ";
     private static final String SQL_GET_COUNT = "select count(*) from phones";
 
-    public Optional<Phone> get(final Long key) {
-        Phone phone = (Phone) jdbcTemplate.queryForObject(SQL_GET_PHONE + key, new BeanPropertyRowMapper(Phone.class));
+    public Phone getById(final Long id) {
+        Phone phone;
+        try {
+            phone = (Phone) jdbcTemplate.queryForObject(SQL_GET_PHONE + id, new BeanPropertyRowMapper(Phone.class));
+        }catch (EmptyResultDataAccessException e){
+            return null;
+        }
         Optional<Phone> optionalPhone = Optional.ofNullable(phone);
-        optionalPhone.ifPresent(phone1 -> phone.setColors(colorDao.get(key)));
-        return optionalPhone;
+        optionalPhone.ifPresent(phone1 -> phone.setColors(colorDao.get(id)));
+        return optionalPhone.get();
     }
 
     public void save(final Phone phone) {

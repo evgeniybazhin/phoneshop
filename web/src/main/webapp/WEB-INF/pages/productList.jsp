@@ -57,7 +57,7 @@
                                                             src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}">
                 </td>
                 <td style="vertical-align: middle!important"><c:out value="${phone.brand}"/></td>
-                <td style="vertical-align: middle!important"><c:out value="${phone.model}"/></td>
+                <td style="vertical-align: middle!important"><a href="${pageContext.request.contextPath}/productDetails?id=${phone.id}"><c:out value="${phone.model}"/></a></td>
                 <td style="vertical-align: middle!important">
                     <c:forEach items="${phone.colors}" var="color">
                         <c:out value="${color.code}"/>
