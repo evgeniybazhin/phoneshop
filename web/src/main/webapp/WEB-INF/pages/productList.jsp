@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
     <title>Product List</title>
@@ -64,15 +65,37 @@
                     </c:forEach></td>
                 <td style="vertical-align: middle!important"><c:out value="${phone.displaySizeInches}''"/></td>
                 <td style="vertical-align: middle!important">$<c:out value="${phone.price}"/></td>
-                <td style="vertical-align: middle!important"></td>
+                <td style="vertical-align: middle!important">
+                    <input type="text" class="form-control" id="phone${phone.id}Quantity" value="0" style="width:70px;"/>
+                </td>
                 <td class="text-center" style="vertical-align: middle!important">
-                    <button class="btn btn-info">Add to cart</button>
+                    <button class="btn btn-info" onclick="addToCart(${phone.id})">Add to cart</button>
                 </td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
 </div>
+<script>
+    var addToCart = function (id) {
+        var quantityField = $('#phone' + id + 'Quantity');
+        var quantity = quantityField.val();
+        $.post({
+            url: "${pageContext.request.contextPath}/ajaxCart",
+            data: {
+                quantity: quantity,
+                phoneId: id
+            },
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: updateCartStatus
+        });
+    }
+    var updateCartStatus = function(status) {
+        $('#phonesTotal').html(status.phonesTotal);
+        $('#costTotal').html(status.costTotal);
+    };
+</script>
 <div class="container">
     <div class="float-left">
         <form method="get" id="gotoPageForm">
