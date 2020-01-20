@@ -34,16 +34,16 @@ public class JdbcPhoneDao implements PhoneDao {
     private static final String SQL_GET_PHONE = "select * from phones where id = ";
     private static final String SQL_GET_COUNT = "select count(*) from phones";
 
-    public Phone getById(final Long id) {
+    public Optional<Phone> getById(final Long id) {
         Phone phone;
         try {
             phone = (Phone) jdbcTemplate.queryForObject(SQL_GET_PHONE + id, new BeanPropertyRowMapper(Phone.class));
         }catch (EmptyResultDataAccessException e){
-            return null;
+            return Optional.empty();
         }
         Optional<Phone> optionalPhone = Optional.ofNullable(phone);
         optionalPhone.ifPresent(phone1 -> phone.setColors(colorDao.get(id)));
-        return optionalPhone.get();
+        return optionalPhone;
     }
 
     public void save(final Phone phone) {

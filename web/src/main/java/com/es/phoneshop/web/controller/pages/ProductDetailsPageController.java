@@ -21,7 +21,7 @@ public class ProductDetailsPageController {
     public ModelAndView showDetailPhone(@RequestParam(value = "id", required = false) Long id, ModelAndView modelAndView){
         modelAndView.setViewName("productDetailPage");
         if (id != null){
-            Optional<Phone> optionalPhone = Optional.ofNullable(phoneService.getById(id));
+            Optional<Phone> optionalPhone = phoneService.getById(id);
             optionalPhone.ifPresent(phone -> modelAndView.addObject("phone", optionalPhone.get()));
         }
         return modelAndView;

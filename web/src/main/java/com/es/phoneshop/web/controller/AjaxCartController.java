@@ -1,11 +1,8 @@
 package com.es.phoneshop.web.controller;
 
+import com.es.core.cart.CartItem;
+import com.es.core.cart.CartItemResponse;
 import com.es.core.cart.CartService;
-import com.es.core.cart.CartStatus;
-import com.es.phoneshop.web.controller.throwable.IncorrectFormFormatException;
-import com.es.phoneshop.web.controller.util.CartItem;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +17,14 @@ public class AjaxCartController {
     private CartService cartService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CartStatus> addPhone(@RequestBody @Valid CartItem cartItem, BindingResult bindingResult) {
+    @ResponseBody
+    public CartItemResponse addPhone(@RequestBody @Valid CartItem cartItem, BindingResult bindingResult){
+        CartItemResponse cartItemResponse = new CartItemResponse();
         if(!bindingResult.hasErrors()){
             cartService.addPhone(cartItem.getPhoneId(), cartItem.getQuantity());
-            return new ResponseEntity<>(cartService.getCart().getStatus(), HttpStatus.OK);
+            cartItemResponse.setPriceTotal(cartService.getCart().getTotalPrice());
+            return cartItemResponse;
         }
-        throw new IncorrectFormFormatException();
-    }
-
-    @ExceptionHandler(IncorrectFormFormatException.class)
-    private @ResponseBody ResponseEntity<String> handleIncorrectFormFormat() {
-        return new ResponseEntity<>("Incorrect format", HttpStatus.BAD_REQUEST);
+        return null;
     }
 }

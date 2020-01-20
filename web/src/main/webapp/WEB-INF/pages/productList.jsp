@@ -36,6 +36,7 @@
         </form>
     </div>
 </div>
+<div id="priceTotal"></div>
 <c:url var="patternUrl" value="/productList?&search=${param.search}"/>
 <div class="container">
     <table class="table table-bordered table-striped">
@@ -82,18 +83,20 @@
         var quantity = quantityField.val();
         $.post({
             url: "${pageContext.request.contextPath}/ajaxCart",
-            data: {
-                quantity: quantity,
-                phoneId: id
-            },
-            contentType: "application/json;charset=UTF-8",
+            data : JSON.stringify({
+                 data : {quantity: quantity,
+                 phoneId: id}
+            }),
+            contentType: "application/json",
             dataType: "json",
             success: updateCartStatus
         });
     }
     var updateCartStatus = function(status) {
-        $('#phonesTotal').html(status.phonesTotal);
-        $('#costTotal').html(status.costTotal);
+        if(status != null){
+            $('#priceTotal').html(status.priceTotal);
+        }
+
     };
 </script>
 <div class="container">

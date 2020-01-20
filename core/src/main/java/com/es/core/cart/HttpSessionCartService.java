@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -26,12 +27,20 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void addPhone(Long phoneId, Long quantity) {
-        Phone phone = phoneDao.getById(phoneId);
+        Optional<Phone> optionalPhone = phoneDao.getById(phoneId);
         Stock stock = stockDao.getCountInStock(phoneId);
-        if (stock.getStock() < quantity){
-
+        if(quantity < stock.getStock()){
+            throw new RuntimeException();
         }
-        cart.addItem(phone, quantity);
+        CartItem cartItem = new CartItem(phoneId, quantity);
+        cart.getCartItems().add(cartItem);
+        setPrice(optionalPhone, quantity);
+    }
+
+    private void setPrice(Optional<Phone> phone, Long quantity){
+        Long price = cart.getTotalPrice().longValue();
+        price += phone.get().getPrice().longValue() * quantity;
+        cart.setTotalPrice(price);
     }
 
     @Override

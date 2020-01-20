@@ -1,41 +1,37 @@
 package com.es.core.cart;
 
-import com.es.core.model.phone.Phone;
-
-import java.util.Objects;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 public class CartItem {
-    private final Phone phone;
+    @NotNull
+    private Long phoneId;
+
+    @NotNull
+    @Min(1)
     private Long quantity;
 
-    CartItem(Phone phone, Long quantity) {
-        this.phone = phone;
+    public CartItem() {
+    }
+
+    public CartItem(Long phoneId, Long quantity) {
+        this.phoneId = phoneId;
         this.quantity = quantity;
     }
 
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public Long getQuantity() {
-        return quantity;
+    public void setPhoneId(Long phoneId) {
+        this.phoneId = phoneId;
     }
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CartItem cartItem = (CartItem) o;
-        return Objects.equals(phone, cartItem.phone) &&
-                Objects.equals(quantity, cartItem.quantity);
+    public Long getQuantity() {
+        return quantity;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(phone, quantity);
+    public Long getPhoneId() {
+        return phoneId;
     }
 }

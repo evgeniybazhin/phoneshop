@@ -13,12 +13,12 @@ public class JdbcPhoneService implements PhoneService{
     private PhoneDao phoneDao;
 
     @Override
-    public Phone getById(Long id) {
-        Optional<Phone> phone = Optional.ofNullable(phoneDao.getById(id));
+    public Optional<Phone> getById(Long id) {
+        Optional<Phone> phone = phoneDao.getById(id);
         if(phone.isPresent()){
-            return phone.get();
+            return phone;
         }else{
-            return null;
+            return Optional.empty();
         }
     }
 }
