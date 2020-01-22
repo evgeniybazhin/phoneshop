@@ -9,6 +9,19 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .cart-link {
+            display: none;
+        }
+
+        .cart-link.isVisible {
+            display: block;
+        }
+
+        .cart-link a {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 <form method="get" id="sortByForm" hidden>
@@ -27,6 +40,9 @@
     <div class="d-inline-block">
         <h3>Phones</h3>
     </div>
+    <div class="cart-link">
+        <a href="${ pageContext.request.contextPath }/cart">Cart page</a>
+    </div>
     <div class="d-inline-block float-right">
         <form class="form-inline my-2 my-lg-0" method="get" id="searchForm">
             <c:if test="${not empty param.sortBy}">
@@ -36,7 +52,7 @@
         </form>
     </div>
 </div>
-<div id="priceTotal"></div>
+
 <c:url var="patternUrl" value="/productList?&search=${param.search}"/>
 <div class="container">
     <table class="table table-bordered table-striped">
@@ -91,13 +107,17 @@
             dataType: "json",
             success: updateCartStatus
         });
-    }
-    var updateCartStatus = function(status) {
-        if(status != null){
-            $('#priceTotal').html(status.priceTotal);
-        }
-
     };
+
+    var updateCartStatus = function(status) {
+        showLink();
+    };
+
+    function  showLink () {
+        var link = document.querySelector('.cart-link');
+        link.classList.add('isVisible');
+    };
+
 </script>
 <div class="container">
     <div class="float-left">

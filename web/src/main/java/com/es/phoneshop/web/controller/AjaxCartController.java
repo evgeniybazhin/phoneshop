@@ -12,7 +12,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(value = "/ajaxCart")
 public class AjaxCartController {
-    private static final String WRONG_DATA = "wrong data";
     @Resource
     private CartService cartService;
 
@@ -22,7 +21,6 @@ public class AjaxCartController {
         CartItemResponse cartItemResponse = new CartItemResponse();
         if(!bindingResult.hasErrors()){
             cartService.addPhone(cartItem.getPhoneId(), cartItem.getQuantity());
-            cartItemResponse.setPriceTotal(cartService.getCart().getTotalPrice());
             return cartItemResponse;
         }
         return null;

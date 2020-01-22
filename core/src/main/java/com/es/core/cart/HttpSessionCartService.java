@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -22,8 +20,15 @@ public class HttpSessionCartService implements CartService {
     @Resource
     private Cart cart;
     @Override
-    public Cart getCart() {
-        return cart;
+    public List<CartItemResponse> getCart() {
+        List<CartItemResponse> cartItems = new ArrayList<>();
+        for(CartItem cartItem : cart.getCartItems()){
+            CartItemResponse cartItemResponse = new CartItemResponse();
+            cartItemResponse.setPhone(phoneDao.getById(cartItem.getPhoneId()).get());
+            cartItemResponse.setQuantity(cartItem.getQuantity());
+            cartItems.add(cartItemResponse);
+        }
+        return cartItems;
     }
 
     @Override
@@ -56,47 +61,33 @@ public class HttpSessionCartService implements CartService {
         List<CartItem> itemList = cart.getCartItems();
         for(CartItem cartItem : itemList){
             if(items.containsKey(cartItem.getPhoneId())){
-                repriceCartAfterUpdate(items, cartItem);
+                cartItem.setQuantity(items.get(cartItem.getPhoneId()));
             }
         }
-    }
-
-    private void repriceCartAfterUpdate(Map<Long, Long> items, CartItem cartItem){
-        Optional<Phone> phone = phoneDao.getById(cartItem.getPhoneId());
-        BigDecimal price;
-        BigDecimal totalPrice = subtractPrice(cartItem.getPhoneId(), cartItem);
-        price = phone.get().getPrice().multiply(BigDecimal.valueOf(items.get(cartItem.getPhoneId())));
-        totalPrice = totalPrice.add(price);
-        cart.setTotalPrice(totalPrice);
-        stockDao.updateStock(cartItem.getPhoneId(), items.get(cartItem.getPhoneId()));
+        repriceOrder();
     }
 
     @Override
     public void remove(Long phoneId) {
         CartItem cartItem = null;
         for(CartItem item : cart.getCartItems()){
-            if(item.getPhoneId() == phoneId){
+            if(item.getPhoneId().equals(phoneId)){
                 cartItem = item;
+                cart.getCartItems().remove(cartItem);
             }
         }
-        cart.getCartItems().remove(phoneId);
-        repriceCartAfterRemove(cartItem, phoneId);
+
+        repriceOrder();
     }
 
-    private void repriceCartAfterRemove(CartItem cartItem, Long phoneId){
-        BigDecimal totalPrice = subtractPrice(phoneId, cartItem);
+    private void repriceOrder(){
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for(CartItem cartItem : cart.getCartItems()){
+            Optional<Phone> optionalPhone = phoneDao.getById(cartItem.getPhoneId());
+            Long quantity = cartItem.getQuantity();
+            BigDecimal price = optionalPhone.get().getPrice().multiply(BigDecimal.valueOf(quantity));
+            totalPrice = totalPrice.add(price);
+        }
         cart.setTotalPrice(totalPrice);
-        stockDao.updateStock(phoneId, null);
     }
-
-    private BigDecimal subtractPrice(Long phoneId, CartItem cartItem){
-        Optional<Phone> phone = phoneDao.getById(phoneId);
-        BigDecimal totalPrice = cart.getTotalPrice();
-        BigDecimal price;
-        price = phone.get().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
-        totalPrice = totalPrice.subtract(price);
-        return totalPrice;
-    }
-
-
 }
