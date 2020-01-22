@@ -84,8 +84,8 @@
         $.post({
             url: "${pageContext.request.contextPath}/ajaxCart",
             data : JSON.stringify({
-                 data : {quantity: quantity,
-                 phoneId: id}
+                 quantity: quantity,
+                 phoneId: id
             }),
             contentType: "application/json",
             dataType: "json",
