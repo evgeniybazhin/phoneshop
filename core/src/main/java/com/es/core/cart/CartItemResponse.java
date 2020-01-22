@@ -1,20 +1,22 @@
 package com.es.core.cart;
 
+import java.math.BigDecimal;
+
 public class CartItemResponse {
-    private Long priceTotal;
+    private BigDecimal priceTotal;
 
     public CartItemResponse() {
     }
 
-    public CartItemResponse(Long priceTotal) {
+    public CartItemResponse(BigDecimal priceTotal) {
         this.priceTotal = priceTotal;
     }
 
-    public Long getPriceTotal() {
+    public BigDecimal getPriceTotal() {
         return priceTotal;
     }
 
-    public void setPriceTotal(Long priceTotal) {
+    public void setPriceTotal(BigDecimal priceTotal) {
         this.priceTotal = priceTotal;
     }
 }

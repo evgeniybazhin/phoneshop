@@ -15,4 +15,10 @@ public class JdbcStockDao implements StockDao {
     public Stock getCountInStock(Long key) {
         return (Stock) jdbcTemplate.queryForObject("select * from stocks inner join phones on stocks.phoneId = phones.id where phones.Id = " + key, new BeanPropertyRowMapper(Stock.class));
     }
+
+    @Override
+    public void updateStock(Long phoneId, Long quantity) {
+        String query = "update stocks set reserved = ? where phoneId = ?";
+        jdbcTemplate.update(query, quantity, phoneId);
+    }
 }
