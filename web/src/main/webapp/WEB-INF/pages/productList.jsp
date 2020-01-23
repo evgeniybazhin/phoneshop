@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
     <title>Product List</title>
@@ -8,6 +9,19 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .cart-link {
+            display: none;
+        }
+
+        .cart-link.isVisible {
+            display: block;
+        }
+
+        .cart-link a {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 <form method="get" id="sortByForm" hidden>
@@ -26,6 +40,9 @@
     <div class="d-inline-block">
         <h3>Phones</h3>
     </div>
+    <div class="cart-link">
+        <a href="${ pageContext.request.contextPath }/cart">Cart page</a>
+    </div>
     <div class="d-inline-block float-right">
         <form class="form-inline my-2 my-lg-0" method="get" id="searchForm">
             <c:if test="${not empty param.sortBy}">
@@ -35,6 +52,7 @@
         </form>
     </div>
 </div>
+
 <c:url var="patternUrl" value="/productList?&search=${param.search}"/>
 <div class="container">
     <table class="table table-bordered table-striped">
@@ -57,22 +75,50 @@
                                                             src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}">
                 </td>
                 <td style="vertical-align: middle!important"><c:out value="${phone.brand}"/></td>
-                <td style="vertical-align: middle!important"><c:out value="${phone.model}"/></td>
+                <td style="vertical-align: middle!important"><a href="${pageContext.request.contextPath}/productDetails?id=${phone.id}"><c:out value="${phone.model}"/></a></td>
                 <td style="vertical-align: middle!important">
                     <c:forEach items="${phone.colors}" var="color">
                         <c:out value="${color.code}"/>
                     </c:forEach></td>
                 <td style="vertical-align: middle!important"><c:out value="${phone.displaySizeInches}''"/></td>
                 <td style="vertical-align: middle!important">$<c:out value="${phone.price}"/></td>
-                <td style="vertical-align: middle!important"></td>
+                <td style="vertical-align: middle!important">
+                    <input type="text" class="form-control" id="phone${phone.id}Quantity" value="0" style="width:70px;"/>
+                </td>
                 <td class="text-center" style="vertical-align: middle!important">
-                    <button class="btn btn-info">Add to cart</button>
+                    <button class="btn btn-info" onclick="addToCart(${phone.id})">Add to cart</button>
                 </td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
 </div>
+<script>
+    var addToCart = function (id) {
+        var quantityField = $('#phone' + id + 'Quantity');
+        var quantity = quantityField.val();
+        $.post({
+            url: "${pageContext.request.contextPath}/ajaxCart",
+            data : JSON.stringify({
+                 quantity: quantity,
+                 phoneId: id
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: updateCartStatus
+        });
+    };
+
+    var updateCartStatus = function(status) {
+        showLink();
+    };
+
+    function  showLink () {
+        var link = document.querySelector('.cart-link');
+        link.classList.add('isVisible');
+    };
+
+</script>
 <div class="container">
     <div class="float-left">
         <form method="get" id="gotoPageForm">

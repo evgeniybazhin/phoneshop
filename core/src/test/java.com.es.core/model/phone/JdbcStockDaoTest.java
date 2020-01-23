@@ -1,5 +1,6 @@
 package model.phone;
 
+import com.es.core.model.phone.Stock;
 import com.es.core.model.phone.StockDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,5 +22,14 @@ public class JdbcStockDaoTest {
     public void getStockByKey(){
         Long key = new Long(1001);
         assertNotNull(stockDao.getCountInStock(key));
+    }
+
+    @Test
+    public void updateStockTest(){
+        Long phoneId = new Long(1003);
+        Long quantity = new Long(10);
+        stockDao.updateStock(phoneId, quantity);
+        Integer reserved = stockDao.getCountInStock(phoneId).getReserved();
+        assertNotNull(reserved);
     }
 }
