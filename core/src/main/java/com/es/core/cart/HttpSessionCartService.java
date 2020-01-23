@@ -33,19 +33,29 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void addPhone(Long phoneId, Long quantity) {
-        try {
-            Optional<Phone> optionalPhone = phoneDao.getById(phoneId);
-            Stock stock = stockDao.getCountInStock(phoneId);
-            if(quantity > stock.getStock()){
-                throw new RuntimeException();
+        if(!isAddedPhone(phoneId)){
+            try {
+                Optional<Phone> optionalPhone = phoneDao.getById(phoneId);
+                Stock stock = stockDao.getCountInStock(phoneId);
+                if(quantity > stock.getStock()){
+                    throw new RuntimeException();
+                }
+                CartItem cartItem = new CartItem(phoneId, quantity);
+                cart.getCartItems().add(cartItem);
+                setPrice(optionalPhone, quantity);
+                stockDao.updateStock(phoneId, quantity);
+            }catch (Exception e){
+                System.out.println("Something went wrong");
             }
-            CartItem cartItem = new CartItem(phoneId, quantity);
-            cart.getCartItems().add(cartItem);
-            setPrice(optionalPhone, quantity);
-            stockDao.updateStock(phoneId, quantity);
-        }catch (Exception e){
-            System.out.println("Something went wrong");
         }
+    }
+    private boolean isAddedPhone(Long phoneId){
+        for(CartItem cartItem : cart.getCartItems()){
+            if(cartItem.getPhoneId().equals(phoneId)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setPrice(Optional<Phone> phone, Long quantity){
@@ -69,11 +79,10 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void remove(Long phoneId) {
-        CartItem cartItem = null;
-        for(CartItem item : cart.getCartItems()){
+        List<CartItem> itemsForIter = cart.getCartItems();
+        for(CartItem item : itemsForIter){
             if(item.getPhoneId().equals(phoneId)){
-                cartItem = item;
-                cart.getCartItems().remove(cartItem);
+                cart.getCartItems().remove(item);
             }
         }
 
