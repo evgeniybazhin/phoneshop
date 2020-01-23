@@ -54,7 +54,7 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     public List<Phone> findAll(int offset, int limit, String search, String sortBy) {
-        List<Phone> phones = (List<Phone>) jdbcTemplate.query("select * from (SELECT * FROM phones LEFT JOIN stocks ON id = phoneId WHERE stock > 0) as phones" + searchQuery(search) + sortQuery(sortBy) + " offset " + offset +" limit " + limit, new BeanPropertyRowMapper(Phone.class));
+        List<Phone> phones = (List<Phone>) jdbcTemplate.query("select * from (SELECT * FROM (SELECT * FROM phones where price > 0) LEFT JOIN stocks ON id = phoneId WHERE stock > 0 ) as phones" + searchQuery(search) + sortQuery(sortBy) + " offset " + offset +" limit " + limit, new BeanPropertyRowMapper(Phone.class));
         if(phones != null){
             phones.forEach(phone -> phone.setColors(colorDao.get(phone.getId())));
         }
