@@ -13,6 +13,7 @@
 </head>
 <body>
 <div class="container">
+    <spring:form id="updateForm" method="post" modelAttribute="updateForm">
     <table class="table table-bordered table-striped">
         <thead style="background-color: #828082;">
         <tr class="d-table-row text-light text-center">
@@ -26,39 +27,34 @@
         <tbody>
             <c:forEach var="cartItem" items="${cartList}">
                 <tr>
-                     <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.brand}"/></td>
-                     <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.model}"/></td>
-                     <td style="vertical-align: middle!important">$<c:out value="${cartItem.phone.price}"/></td>
-                     <td style="vertical-align: middle!important">
-                         <input type="text" class="form-control" id="phone${cartItem.phone.id}Quantity" value="${cartItem.quantity}" style="width:70px;"/>
-                     </td>
-                     <td class="text-center" style="vertical-align: middle!important">
-                         <button class="btn btn-info" onclick="updateCart(${cartItem.phone.id})">Update</button>
-                         <form method="post" action="${pageContext.request.contextPath}/cart">
-                             <input name="id" type="hidden" value="${cartItem.phone.id}">
-                             <button class="btn btn-info">Remove</button>
-                         </form>
-                     </td>
+                    <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.brand}"/></td>
+                    <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.model}"/></td>
+                    <td style="vertical-align: middle!important">$<c:out value="${cartItem.phone.price}"/></td>
+                    <td style="vertical-align: middle!important">
+                        <spring:input path="itemsForUpdate['${cartItem.phone.id}']" value="${cartItem.quantity}"/>
+                    </td>
+                    <td class="text-center" style="vertical-align: middle!important">
+                        <c:url value="/cart/delete/${cartItem.phone.id}" var="deletePhoneUrl"/>
+                        <button onclick="deleteCartItem('${deletePhoneUrl}');" class="btn btn-primary mb-2">
+                            Delete
+                        </button>
+                    </td>
                 </tr>
             </c:forEach>
+
         </tbody>
     </table>
+    </spring:form>
+    <button type="submit" form="updateForm">Update</button>
 </div>
 <p>Total price - ${priceTotal}</p>
 <script>
-    var updateCart = function (id) {
-        var quantityField = $('#phone' + id + 'Quantity');
-        var quantity = quantityField.val();
+    function deleteCartItem(url) {
         $.ajax({
-            type: "put",
-            url: "${pageContext.request.contextPath}/cart",
-            data : JSON.stringify({
-                quantity: quantity,
-                phoneId: id
-            }),
-            contentType: "application/json",
-            dataType: "json",
+            url: url,
+            type: "DELETE"
         });
+        return false;
     }
 </script>
 </body>

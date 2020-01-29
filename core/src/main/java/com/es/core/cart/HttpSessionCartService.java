@@ -20,58 +20,57 @@ public class HttpSessionCartService implements CartService {
     @Resource
     private Cart cart;
     @Override
-    public List<CartItemResponse> getCart() {
-        List<CartItemResponse> cartItems = new ArrayList<>();
+    public List<CartItem> getCart() {
+        List<CartItem> cartItems = new ArrayList<>();
         for(CartItem cartItem : cart.getCartItems()){
-            CartItemResponse cartItemResponse = new CartItemResponse();
-            cartItemResponse.setPhone(phoneDao.getById(cartItem.getPhoneId()).get());
-            cartItemResponse.setQuantity(cartItem.getQuantity());
-            cartItems.add(cartItemResponse);
+            CartItem item = new CartItem();
+            item.setPhone(phoneDao.getById(cartItem.getPhone().getId()).get());
+            item.setQuantity(cartItem.getQuantity());
+            cartItems.add(item);
         }
         return cartItems;
     }
 
     @Override
-    public void addPhone(Long phoneId, Long quantity) {
+    public String addPhone(Long phoneId, Long quantity) {
         if(!isAddedPhone(phoneId)){
             try {
                 Optional<Phone> optionalPhone = phoneDao.getById(phoneId);
                 Stock stock = stockDao.getCountInStock(phoneId);
                 if(quantity > stock.getStock()){
-                    throw new RuntimeException();
+                    return "Quantity is more than we have";
                 }
-                CartItem cartItem = new CartItem(phoneId, quantity);
+                CartItem cartItem = new CartItem(optionalPhone.get(), quantity);
                 cart.getCartItems().add(cartItem);
-                setPrice(optionalPhone, quantity);
-                stockDao.updateStock(phoneId, quantity);
+                repriceOrder();
             }catch (Exception e){
-                System.out.println("Something went wrong");
+                return "Something went wrong";
             }
+            return "Success";
         }
+        return "Phone have already added";
     }
     private boolean isAddedPhone(Long phoneId){
         for(CartItem cartItem : cart.getCartItems()){
-            if(cartItem.getPhoneId().equals(phoneId)){
+            if(cartItem.getPhone().getId().equals(phoneId)){
                 return true;
             }
         }
         return false;
     }
 
-    private void setPrice(Optional<Phone> phone, Long quantity){
-        BigDecimal totalPrice = cart.getTotalPrice();
-        BigDecimal price;
-        price = phone.get().getPrice().multiply(BigDecimal.valueOf(quantity));
-        totalPrice = totalPrice.add(price);
-        cart.setTotalPrice(totalPrice);
-    }
-
     @Override
-    public void update(Map<Long, Long> items) {
+    public void update(CartItemDTOWrapper itemsForUpdate) {
         List<CartItem> itemList = cart.getCartItems();
         for(CartItem cartItem : itemList){
-            if(items.containsKey(cartItem.getPhoneId())){
-                cartItem.setQuantity(items.get(cartItem.getPhoneId()));
+            Long phoneId = cartItem.getPhone().getId();
+            if(itemsForUpdate.getItemsForUpdate().containsKey(phoneId)){
+                Integer totalQuantity = stockDao.getCountInStock(phoneId).getStock();
+                Long newQuantity = itemsForUpdate.getItemsForUpdate().get(phoneId);
+                if(totalQuantity < newQuantity){
+                    return;
+                }
+                cartItem.setQuantity(itemsForUpdate.getItemsForUpdate().get(phoneId));
             }
         }
         repriceOrder();
@@ -79,20 +78,22 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void remove(Long phoneId) {
-        List<CartItem> itemsForIter = cart.getCartItems();
-        for(CartItem item : itemsForIter){
-            if(item.getPhoneId().equals(phoneId)){
-                cart.getCartItems().remove(item);
+        List<CartItem> itemsToRemove = new ArrayList<>();
+        for(CartItem item : cart.getCartItems()){
+            if(item.getPhone().getId().equals(phoneId)){
+                itemsToRemove.add(item);
             }
         }
-
+        if(itemsToRemove.size() > 0){
+            cart.getCartItems().removeAll(itemsToRemove);
+        }
         repriceOrder();
     }
 
     private void repriceOrder(){
         BigDecimal totalPrice = BigDecimal.ZERO;
         for(CartItem cartItem : cart.getCartItems()){
-            Optional<Phone> optionalPhone = phoneDao.getById(cartItem.getPhoneId());
+            Optional<Phone> optionalPhone = phoneDao.getById(cartItem.getPhone().getId());
             Long quantity = cartItem.getQuantity();
             BigDecimal price = optionalPhone.get().getPrice().multiply(BigDecimal.valueOf(quantity));
             totalPrice = totalPrice.add(price);

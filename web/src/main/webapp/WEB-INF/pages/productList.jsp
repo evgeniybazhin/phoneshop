@@ -40,8 +40,13 @@
     <div class="d-inline-block">
         <h3>Phones</h3>
     </div>
-    <div class="cart-link">
-        <a href="${ pageContext.request.contextPath }/cart">Cart page</a>
+    <c:if test="${cartInfo.cartItems.size() > 0}">
+            <a href="${ pageContext.request.contextPath }/cart">Cart page</a>
+    </c:if>
+    <div>
+        <c:if test="${cartInfo.totalPrice > 0}">
+            <span class="badge badge-secondary">${cartInfo.totalPrice}</span>
+        </c:if>
     </div>
     <div class="d-inline-block float-right">
         <form class="form-inline my-2 my-lg-0" method="get" id="searchForm">
@@ -83,7 +88,7 @@
                 <td style="vertical-align: middle!important"><c:out value="${phone.displaySizeInches}''"/></td>
                 <td style="vertical-align: middle!important">$<c:out value="${phone.price}"/></td>
                 <td style="vertical-align: middle!important">
-                    <input type="text" class="form-control" id="phone${phone.id}Quantity" value="0" style="width:70px;"/>
+                    <input type="text" class="form-control" id="phone${phone.id}Quantity" value="1" style="width:70px;"/>
                 </td>
                 <td class="text-center" style="vertical-align: middle!important">
                     <button class="btn btn-info" onclick="addToCart(${phone.id})">Add to cart</button>
@@ -110,6 +115,9 @@
     };
 
     var updateCartStatus = function(status) {
+        if(status.message != null) {
+            alert(status.message)
+        }
         showLink();
     };
 

@@ -28,6 +28,12 @@
                 <p><c:out value="${phone.description}"/></p>
             </div>
         </div>
+        <div class="container mt-3">
+            <div class="mt-4" style="width: 350px;">
+                <input type="text" class="form-control" id="phone${phone.id}Quantity" value="1" style="width:70px;"/>
+                <button class="btn btn-info" onclick="addToCart(${phone.id})">Add to cart</button>
+            </div>
+        </div>
         <div class="float-right" style="width: 40%;">
             <h4><b>Display</b></h4>
             <table class="table table-bordered">
@@ -76,5 +82,27 @@
         </div>
     </div>
 </c:if>
+<script>
+    var addToCart = function (id) {
+        var quantityField = $('#phone' + id + 'Quantity');
+        var quantity = quantityField.val();
+        $.post({
+            url: "${pageContext.request.contextPath}/ajaxCart",
+            data : JSON.stringify({
+                quantity: quantity,
+                phoneId: id
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: updateCartStatus
+        });
+    };
+
+    var updateCartStatus = function(status) {
+        if(status.message != null) {
+            alert(status.message)
+        }
+    };
+</script>
 </body>
 </html>

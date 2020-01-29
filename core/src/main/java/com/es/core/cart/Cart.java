@@ -1,5 +1,6 @@
 package com.es.core.cart;
 
+import com.es.core.cart.CartItem;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

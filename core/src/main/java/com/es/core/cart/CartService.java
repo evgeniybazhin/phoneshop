@@ -5,11 +5,11 @@ import java.util.Map;
 
 public interface CartService {
 
-    List<CartItemResponse> getCart();
+    List<CartItem> getCart();
 
-    void addPhone(Long phoneId, Long quantity);
+    String addPhone(Long phoneId, Long quantity);
 
-    void update(Map<Long, Long> items);
+    void update(CartItemDTOWrapper itemsForUpdate);
 
     void remove(Long phoneId);
 }
