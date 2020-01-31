@@ -23,8 +23,8 @@ public class AjaxCartController {
     public CartItemResponse addPhone(@RequestBody @Valid CartItemDTO cartItem, BindingResult bindingResult){
         CartItemResponse cartItemResponse;
         if(!bindingResult.hasErrors()){
-            String result = cartService.addPhone(cartItem.getPhoneId(), cartItem.getQuantity());
-            cartItemResponse = new CartItemResponse(cart.getTotalPrice(), result);
+            cartService.addPhone(cartItem.getPhoneId(), cartItem.getQuantity());
+            cartItemResponse = new CartItemResponse(cart.getTotalPrice());
             return cartItemResponse;
         }
         return null;

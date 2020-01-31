@@ -32,24 +32,21 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public String addPhone(Long phoneId, Long quantity) {
+    public void addPhone(Long phoneId, Long quantity) {
         if(!isAddedPhone(phoneId)){
-            try {
-                Optional<Phone> optionalPhone = phoneDao.getById(phoneId);
-                Stock stock = stockDao.getCountInStock(phoneId);
-                if(quantity > stock.getStock()){
-                    return "Quantity is more than we have";
-                }
-                CartItem cartItem = new CartItem(optionalPhone.get(), quantity);
-                cart.getCartItems().add(cartItem);
-                repriceOrder();
-            }catch (Exception e){
-                return "Something went wrong";
+            Optional<Phone> optionalPhone = phoneDao.getById(phoneId);
+            Stock stock = stockDao.getCountInStock(phoneId);
+            if(quantity > stock.getStock()){
+                return;
             }
-            return "Success";
+            CartItem cartItem = new CartItem(optionalPhone.get(), quantity);
+            cart.getCartItems().add(cartItem);
+        }else{
+            updateQuantity(phoneId, quantity);
         }
-        return "Phone have already added";
+        repriceOrder();
     }
+
     private boolean isAddedPhone(Long phoneId){
         for(CartItem cartItem : cart.getCartItems()){
             if(cartItem.getPhone().getId().equals(phoneId)){
@@ -57,6 +54,15 @@ public class HttpSessionCartService implements CartService {
             }
         }
         return false;
+    }
+
+    private void updateQuantity(Long phoneId, Long quantity){
+        for(CartItem cartItem : cart.getCartItems()){
+            if(cartItem.getPhone().getId().equals(phoneId)){
+                Long newQuantity = cartItem.getQuantity() + quantity;
+                cartItem.setQuantity(newQuantity);
+            }
+        }
     }
 
     @Override

@@ -7,7 +7,7 @@ public interface CartService {
 
     List<CartItem> getCart();
 
-    String addPhone(Long phoneId, Long quantity);
+    void addPhone(Long phoneId, Long quantity);
 
     void update(CartItemDTOWrapper itemsForUpdate);
 

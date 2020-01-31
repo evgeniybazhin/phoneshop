@@ -110,20 +110,7 @@
             }),
             contentType: "application/json",
             dataType: "json",
-            success: updateCartStatus
         });
-    };
-
-    var updateCartStatus = function(status) {
-        if(status.message != null) {
-            alert(status.message)
-        }
-        showLink();
-    };
-
-    function  showLink () {
-        var link = document.querySelector('.cart-link');
-        link.classList.add('isVisible');
     };
 
 </script>

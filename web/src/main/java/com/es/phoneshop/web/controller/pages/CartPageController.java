@@ -1,7 +1,6 @@
 package com.es.phoneshop.web.controller.pages;
 
 import com.es.core.cart.Cart;
-import com.es.core.cart.CartItemDTO;
 import com.es.core.cart.CartItemDTOWrapper;
 import com.es.core.cart.CartService;
 import org.springframework.stereotype.Controller;
@@ -10,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/cart")
@@ -39,7 +36,7 @@ public class CartPageController {
         return modelAndView;
     }
 
-    @DeleteMapping(value = "/delete/${id}")
+    @DeleteMapping(value = "/delete/{id}")
     public ModelAndView removeFromCart(@PathVariable("id") Long id, ModelAndView modelAndView){
         modelAndView.setViewName("redirect:/cart");
         cartService.remove(id);
