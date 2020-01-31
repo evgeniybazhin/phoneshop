@@ -45,7 +45,9 @@
         </tbody>
     </table>
     </spring:form>
-    <button type="submit" form="updateForm">Update</button>
+    <c:if test="${cartList.size() > 0}">
+        <button type="submit" form="updateForm">Update</button>
+    </c:if>
 </div>
 <p>Total price - ${priceTotal}</p>
 <script>
