@@ -20,15 +20,8 @@ public class HttpSessionCartService implements CartService {
     @Resource
     private Cart cart;
     @Override
-    public List<CartItem> getCart() {
-        List<CartItem> cartItems = new ArrayList<>();
-        for(CartItem cartItem : cart.getCartItems()){
-            CartItem item = new CartItem();
-            item.setPhone(phoneDao.getById(cartItem.getPhone().getId()).get());
-            item.setQuantity(cartItem.getQuantity());
-            cartItems.add(item);
-        }
-        return cartItems;
+    public Cart getCart() {
+        return cart;
     }
 
     @Override

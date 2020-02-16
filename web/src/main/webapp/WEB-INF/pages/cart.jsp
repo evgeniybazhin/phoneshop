@@ -25,7 +25,7 @@
         </tr>
         </thead>
         <tbody>
-            <c:forEach var="cartItem" items="${cartList}">
+            <c:forEach var="cartItem" items="${cart.cartItems}">
                 <tr>
                     <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.brand}"/></td>
                     <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.model}"/></td>
@@ -45,11 +45,14 @@
         </tbody>
     </table>
     </spring:form>
-    <c:if test="${cartList.size() > 0}">
+    <c:if test="${cart.cartItems.size() > 0}">
         <button type="submit" form="updateForm">Update</button>
     </c:if>
+    <form action="${pageContext.request.contextPath}/order">
+        <button>Order</button>
+    </form>
 </div>
-<p>Total price - ${priceTotal}</p>
+<p>Total price - ${cart.totalPrice}</p>
 <script>
     function deleteCartItem(url) {
         $.ajax({

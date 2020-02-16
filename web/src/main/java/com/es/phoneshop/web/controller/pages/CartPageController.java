@@ -15,14 +15,11 @@ import javax.annotation.Resource;
 public class CartPageController {
     @Resource
     private CartService cartService;
-    @Resource
-    private Cart cart;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getCart(ModelAndView modelAndView) {
         modelAndView.setViewName("cart");
-        modelAndView.addObject("cartList", cartService.getCart());
-        modelAndView.addObject("priceTotal", cart.getTotalPrice());
+        modelAndView.addObject("cart", cartService.getCart());
         modelAndView.addObject("updateForm", new CartItemDTOWrapper());
         return modelAndView;
     }
