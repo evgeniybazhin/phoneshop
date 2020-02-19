@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -45,6 +46,17 @@
                 </tr>
             </tbody>
         </table>
+        <spring:form method="post" modelAttribute="info">
+            First name: <spring:input path="firstName"/><br>
+                        <spring:errors path="firstName"/><br>
+            Last name: <spring:input path="lastName"/><br>
+                       <spring:errors path="lastName"/><br>
+            Address:   <spring:input path="deliveryAddress"/><br>
+                       <spring:errors path="deliveryAddress"/><br>
+            Phone:     <spring:input path="contactPhoneNo"/><br>
+                       <spring:errors path="contactPhoneNo"/><br>
+            <spring:button>Order</spring:button>
+        </spring:form>
     </div>
 </body>
 </html>
