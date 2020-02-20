@@ -2,6 +2,7 @@ package com.es.core.order;
 
 import com.es.core.cart.Cart;
 import com.es.core.cart.CartItem;
+import com.es.core.cart.CartService;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderDao;
 import com.es.core.model.order.OrderItem;
@@ -29,6 +30,8 @@ public class OrderServiceImpl implements OrderService {
     private StockDao stockDao;
     @Resource
     private PhoneDao phoneDao;
+    @Resource
+    private CartService cartService;
 
     @Override
     public Order createOrder(Cart cart) {
@@ -48,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void placeOrder(Order order){
+    public Long placeOrder(Order order){
         List<OrderItem> itemsToRemove = new ArrayList<>();
         for(OrderItem item : order.getOrderItems()){
             Long phoneId = item.getPhone().getId();
@@ -61,7 +64,8 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderItems().removeAll(itemsToRemove);
             repriceOrder(order);
         }
-        orderDao.save(order);
+        cartService.clear();
+        return orderDao.save(order);
     }
 
     private void repriceOrder(Order order){

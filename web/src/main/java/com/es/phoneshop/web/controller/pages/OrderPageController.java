@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -32,7 +33,7 @@ public class OrderPageController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView placeOrder(@ModelAttribute(name = "info") @Valid OrderDTO orderDTO, BindingResult bindingResult, ModelAndView modelAndView) throws OutOfStockException {
+    public ModelAndView placeOrder(@ModelAttribute(name = "info") @Valid OrderDTO orderDTO, BindingResult bindingResult, ModelAndView modelAndView, HttpSession httpSession) throws OutOfStockException {
         modelAndView.setViewName("order");
         if(!bindingResult.hasErrors()){
             Order order = orderService.createOrder(cartService.getCart());
@@ -41,8 +42,7 @@ public class OrderPageController {
                 order.setLastName(orderDTO.getLastName());
                 order.setDeliveryAddress(orderDTO.getDeliveryAddress());
                 order.setContactPhoneNo(orderDTO.getContactPhoneNo());
-                orderService.placeOrder(order);
-                modelAndView.addObject("order", order);
+                httpSession.setAttribute("orderId", orderService.placeOrder(order));
                 modelAndView.setViewName("redirect:/orderOverview");
                 return modelAndView;
             }

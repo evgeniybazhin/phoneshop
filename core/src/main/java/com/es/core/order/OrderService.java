@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface OrderService {
     Order createOrder(Cart cart);
-    void placeOrder(Order order) throws OutOfStockException;
+    Long placeOrder(Order order) throws OutOfStockException;
     Optional<Order> getOrder(Long id);
 }

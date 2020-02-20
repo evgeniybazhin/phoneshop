@@ -64,11 +64,6 @@ public class HttpSessionCartService implements CartService {
         for(CartItem cartItem : itemList){
             Long phoneId = cartItem.getPhone().getId();
             if(itemsForUpdate.getItemsForUpdate().containsKey(phoneId)){
-                Integer totalQuantity = stockDao.getCountInStock(phoneId).getStock();
-                Long newQuantity = itemsForUpdate.getItemsForUpdate().get(phoneId);
-                if(totalQuantity < newQuantity){
-                    return;
-                }
                 cartItem.setQuantity(itemsForUpdate.getItemsForUpdate().get(phoneId));
             }
         }
@@ -89,6 +84,12 @@ public class HttpSessionCartService implements CartService {
         repriceOrder();
     }
 
+    @Override
+    public void clear() {
+        cart.setCartItems(new ArrayList<>());
+        repriceOrder();
+    }
+
     private void repriceOrder(){
         BigDecimal totalPrice = BigDecimal.ZERO;
         for(CartItem cartItem : cart.getCartItems()){
@@ -99,4 +100,5 @@ public class HttpSessionCartService implements CartService {
         }
         cart.setTotalPrice(totalPrice);
     }
+
 }
