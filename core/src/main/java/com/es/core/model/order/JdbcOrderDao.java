@@ -41,10 +41,7 @@ public class JdbcOrderDao implements OrderDao {
     public Optional<Order> getById(Long id) {
         ArrayList<Order> orders = (ArrayList<Order>) jdbcTemplate.query(SELECT_ORDER_QUERY, new OrderListResultSetExtractor(), id);
         Optional<Order> optionalOrder = Optional.ofNullable(orders.get(0));
-        if(optionalOrder.isPresent()){
-            return optionalOrder;
-        }
-        return Optional.empty();
+        return optionalOrder;
     }
 
     @Override

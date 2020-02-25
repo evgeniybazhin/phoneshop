@@ -38,10 +38,7 @@ public class OrderPageController {
         if(!bindingResult.hasErrors()){
             Order order = orderService.createOrder(cartService.getCart());
             if(order != null){
-                order.setFirstName(orderDTO.getFirstName());
-                order.setLastName(orderDTO.getLastName());
-                order.setDeliveryAddress(orderDTO.getDeliveryAddress());
-                order.setContactPhoneNo(orderDTO.getContactPhoneNo());
+                orderService.setPersonalInfo(order, orderDTO);
                 httpSession.setAttribute("orderId", orderService.placeOrder(order));
                 modelAndView.setViewName("redirect:/orderOverview");
                 return modelAndView;

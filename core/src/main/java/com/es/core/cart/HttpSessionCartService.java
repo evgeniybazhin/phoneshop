@@ -93,9 +93,8 @@ public class HttpSessionCartService implements CartService {
     private void repriceOrder(){
         BigDecimal totalPrice = BigDecimal.ZERO;
         for(CartItem cartItem : cart.getCartItems()){
-            Optional<Phone> optionalPhone = phoneDao.getById(cartItem.getPhone().getId());
             Long quantity = cartItem.getQuantity();
-            BigDecimal price = optionalPhone.get().getPrice().multiply(BigDecimal.valueOf(quantity));
+            BigDecimal price = cartItem.getPhone().getPrice().multiply(BigDecimal.valueOf(quantity));
             totalPrice = totalPrice.add(price);
         }
         cart.setTotalPrice(totalPrice);

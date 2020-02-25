@@ -4,6 +4,7 @@ import com.es.core.cart.Cart;
 import com.es.core.cart.CartItem;
 import com.es.core.cart.CartService;
 import com.es.core.model.order.Order;
+import com.es.core.model.order.OrderDTO;
 import com.es.core.model.order.OrderDao;
 import com.es.core.model.order.OrderItem;
 import com.es.core.model.phone.Phone;
@@ -83,5 +84,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> getOrder(Long id) {
         return orderDao.getById(id);
+    }
+
+    public void setPersonalInfo(Order order, OrderDTO orderDTO){
+        order.setFirstName(orderDTO.getFirstName());
+        order.setLastName(orderDTO.getLastName());
+        order.setDeliveryAddress(orderDTO.getDeliveryAddress());
+        order.setContactPhoneNo(orderDTO.getContactPhoneNo());
     }
 }
