@@ -41,23 +41,6 @@ public class HttpSessionCartServiceTest {
     }
 
     @Test
-    public void updateCartTest(){
-        Long phoneId = new Long(1003);
-        Long quantuty = new Long(5);
-        Long newQuantity = new Long(10);
-
-        httpSessionCartService.addPhone(phoneId, quantuty);
-        BigDecimal priceBeforeUpdate = cart.getTotalPrice();
-
-        Map<Long, Long> itemToUpdate = new HashMap<>();
-        itemToUpdate.put(phoneId, newQuantity);
-        httpSessionCartService.update(itemToUpdate);
-        BigDecimal priceAfterUpdate = cart.getTotalPrice();
-
-        assertTrue(priceAfterUpdate.compareTo(priceBeforeUpdate) > 0);
-    }
-
-    @Test
     public void removeItemTest(){
         Long phoneId = new Long(1003);
         Long quantity = new Long(5);

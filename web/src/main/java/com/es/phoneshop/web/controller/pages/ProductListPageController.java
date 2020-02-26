@@ -2,6 +2,7 @@ package com.es.phoneshop.web.controller.pages;
 
 import javax.annotation.Resource;
 
+import com.es.core.cart.Cart;
 import com.es.core.model.phone.Phone;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,8 @@ import java.util.List;
 public class ProductListPageController {
     @Resource
     private PhoneDao phoneDao;
+    @Resource
+    private Cart cart;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProductList(@RequestParam(value = "search", required = false) String search,
@@ -33,6 +36,7 @@ public class ProductListPageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pagesTotal", pagesTotal);
         model.addAttribute("phones", phoneList);
+        model.addAttribute("cartInfo", cart);
         return "productList";
     }
 }
