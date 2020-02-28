@@ -3,10 +3,7 @@ package com.es.core.order;
 import com.es.core.cart.Cart;
 import com.es.core.cart.CartItem;
 import com.es.core.cart.CartService;
-import com.es.core.model.order.Order;
-import com.es.core.model.order.OrderDTO;
-import com.es.core.model.order.OrderDao;
-import com.es.core.model.order.OrderItem;
+import com.es.core.model.order.*;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.phone.Stock;
@@ -48,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
        order.setDeliveryPrice(deliveryPrice);
        order.setSubtotal(cart.getTotalPrice());
        order.setTotalPrice(cart.getTotalPrice().add(deliveryPrice));
+       order.setStatus(OrderStatus.NEW);
        return order;
     }
 
@@ -91,5 +89,16 @@ public class OrderServiceImpl implements OrderService {
         order.setLastName(orderDTO.getLastName());
         order.setDeliveryAddress(orderDTO.getDeliveryAddress());
         order.setContactPhoneNo(orderDTO.getContactPhoneNo());
+    }
+
+    @Override
+    public List<Order> findAll() {
+        return orderDao.findAll();
+    }
+
+    @Override
+    public void updateStatus(String statusValue, Long id) {
+        OrderStatus orderStatus = OrderStatus.valueOf(statusValue);
+        orderDao.updateStatus(orderStatus, id);
     }
 }

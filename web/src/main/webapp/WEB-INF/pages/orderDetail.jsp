@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Order Overview</title>
+    <title>Order</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
@@ -43,16 +43,20 @@
         <tr>
             <td style="vertical-align: middle!important"><c:out value="${order.totalPrice}"/></td>
         </tr>
+        <tr>
+            <td style="vertical-align: middle!important"><c:out value="${order.status}"/></td>
+        </tr>
         </tbody>
     </table>
+    <form method="post">
+        <c:url value="/admin/orders/${order.id}/updateStatus?status=DELIVERED" var="updateStatusDeliveredUrl"/>
+        <button type="submit" formaction="${updateStatusDeliveredUrl}" class="btn btn-primary mb-2">Delivered</button>
+        <c:url value="/admin/orders/${order.id}/updateStatus?status=REJECTED" var="updateStatusRejectedUrl"/>
+        <button type="submit" formaction="${updateStatusRejectedUrl}" class="btn btn-primary mb-2">Rejected</button>
+    </form>
 
-    First name ${order.firstName}<br>
-    Last name ${order.lastName}<br>
-    Address ${order.deliveryAddress}<br>
-    Phone ${order.contactPhoneNo}
-
-    <form action="${pageContext.request.contextPath}/">
-        <button type="submit">Continue shopping</button>
+    <form action="${pageContext.request.contextPath}/admin/orders">
+        <button>Back</button>
     </form>
 </div>
 </body>

@@ -41,7 +41,9 @@
                     </td>
                 </tr>
             </c:forEach>
-
+            <tr>
+                <td class="vertical-align: middle!important"><c:out value="${cart.totalPrice}"/></td>
+            </tr>
         </tbody>
     </table>
     </spring:form>
@@ -52,7 +54,7 @@
         <button>Order</button>
     </form>
 </div>
-<p>Total price - ${cart.totalPrice}</p>
+
 <script>
     function deleteCartItem(url) {
         $.ajax({

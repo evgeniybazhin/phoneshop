@@ -39,6 +39,7 @@ public class OrderListResultSetExtractor implements ResultSetExtractor<List<Orde
         order.setLastName(rs.getString("lastName"));
         order.setDeliveryAddress(rs.getString("deliveryAddress"));
         order.setContactPhoneNo(rs.getString("contactPhoneNo"));
+        order.setStatus(OrderStatus.valueOf(rs.getString("status")));
         return order;
     }
 
