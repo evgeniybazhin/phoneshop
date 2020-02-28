@@ -54,7 +54,6 @@
         <c:url value="/admin/orders/${order.id}/updateStatus?status=REJECTED" var="updateStatusRejectedUrl"/>
         <button type="submit" formaction="${updateStatusRejectedUrl}" class="btn btn-primary mb-2">Rejected</button>
     </form>
-
     <form action="${pageContext.request.contextPath}/admin/orders">
         <button>Back</button>
     </form>

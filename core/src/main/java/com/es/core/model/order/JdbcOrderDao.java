@@ -76,7 +76,7 @@ public class JdbcOrderDao implements OrderDao {
 
     @Override
     public void updateStatus(OrderStatus orderStatus, Long id) {
-        jdbcTemplate.update(UPDATE_STATUS_QUERY, orderStatus, id);
+        jdbcTemplate.update(UPDATE_STATUS_QUERY, orderStatus.toString(), id);
     }
 
     private SqlParameterSource getParameters(Order order){
