@@ -12,6 +12,7 @@
 </head>
 <body>
 <div class="container">
+    <jsp:include page="../template/templateSec.jsp"/>
     <table class="table table-bordered table-striped">
         <thead style="background-color: #828082;">
         <tr class="d-table-row text-light text-center">
@@ -48,12 +49,14 @@
         </tr>
         </tbody>
     </table>
-    <form method="post">
-        <c:url value="/admin/orders/${order.id}/updateStatus?status=DELIVERED" var="updateStatusDeliveredUrl"/>
-        <button type="submit" formaction="${updateStatusDeliveredUrl}" class="btn btn-primary mb-2">Delivered</button>
-        <c:url value="/admin/orders/${order.id}/updateStatus?status=REJECTED" var="updateStatusRejectedUrl"/>
-        <button type="submit" formaction="${updateStatusRejectedUrl}" class="btn btn-primary mb-2">Rejected</button>
-    </form>
+    <c:if test="${order.status.toString().equals('NEW')}">
+        <form method="post">
+            <c:url value="/admin/orders/${order.id}/updateStatus?status=DELIVERED" var="updateStatusDeliveredUrl"/>
+            <button type="submit" formaction="${updateStatusDeliveredUrl}" class="btn btn-primary mb-2">Delivered</button>
+            <c:url value="/admin/orders/${order.id}/updateStatus?status=REJECTED" var="updateStatusRejectedUrl"/>
+            <button type="submit" formaction="${updateStatusRejectedUrl}" class="btn btn-primary mb-2">Rejected</button>
+        </form>
+    </c:if>
     <form action="${pageContext.request.contextPath}/admin/orders">
         <button>Back</button>
     </form>
