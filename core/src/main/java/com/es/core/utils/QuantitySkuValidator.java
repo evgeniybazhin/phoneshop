@@ -17,7 +17,7 @@ public class QuantitySkuValidator implements ConstraintValidator<QuantitySku, Ma
         }
 
         for(Map.Entry<Long, Long> item : itemsToUpdate.entrySet()){
-            return item.getValue().toString().matches("[0-9]+");
+            return item.getValue() > 0 && item.getValue().toString().matches("[0-9]+");
         }
         return false;
     }
