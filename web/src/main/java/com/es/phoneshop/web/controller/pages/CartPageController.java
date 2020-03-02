@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/cart")
@@ -25,11 +26,14 @@ public class CartPageController {
     }
 
     @PostMapping
-    public ModelAndView updateCart(@ModelAttribute(name = "updateForm") CartItemDTOWrapper itemsForUpdate, ModelAndView modelAndView, BindingResult bindingResult) {
-        modelAndView.setViewName("redirect:/cart");
+    public ModelAndView updateCart(@ModelAttribute(name = "updateForm") @Valid CartItemDTOWrapper itemsForUpdate, BindingResult bindingResult, ModelAndView modelAndView) {
         if(!bindingResult.hasErrors()){
             cartService.update(itemsForUpdate);
+            modelAndView.setViewName("redirect:/cart");
+            return modelAndView;
         }
+        modelAndView.setViewName("cart");
+        modelAndView.addObject("cart", cartService.getCart());
         return modelAndView;
     }
 

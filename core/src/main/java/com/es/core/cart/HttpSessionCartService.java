@@ -64,6 +64,11 @@ public class HttpSessionCartService implements CartService {
         for(CartItem cartItem : itemList){
             Long phoneId = cartItem.getPhone().getId();
             if(itemsForUpdate.getItemsForUpdate().containsKey(phoneId)){
+                Integer totalQuantity = stockDao.getCountInStock(phoneId).getStock();
+                Long newQuantity = itemsForUpdate.getItemsForUpdate().get(phoneId);
+                if(totalQuantity < newQuantity){
+                    return;
+                }
                 cartItem.setQuantity(itemsForUpdate.getItemsForUpdate().get(phoneId));
             }
         }

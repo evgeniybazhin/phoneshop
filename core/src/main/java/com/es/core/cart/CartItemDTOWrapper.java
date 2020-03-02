@@ -1,9 +1,12 @@
 package com.es.core.cart;
 
+import com.es.core.utils.QuantitySku;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class CartItemDTOWrapper {
+    @QuantitySku
     private Map<Long, Long> itemsForUpdate = new HashMap<>();
 
     public CartItemDTOWrapper() {
