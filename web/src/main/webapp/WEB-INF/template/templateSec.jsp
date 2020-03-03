@@ -14,6 +14,9 @@
     <form style="float: right" action="${logoutUrl}" method="post">
         <button type="submit" class="btn btn-primary">Logout</button>
     </form>
+    <form style="float: right" action="/admin/orders">
+        <button type="submit" class="btn btn-primary">Admin</button>
+    </form>
 </sec:authorize>
 <sec:authorize access="!hasRole('ROLE_ADMIN')">
     <form style="float: right" action="${pageContext.request.contextPath}/admin">
