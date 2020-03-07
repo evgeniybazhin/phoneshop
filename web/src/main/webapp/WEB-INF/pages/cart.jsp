@@ -31,8 +31,8 @@
                     <td style="vertical-align: middle!important"><c:out value="${cartItem.phone.model}"/></td>
                     <td style="vertical-align: middle!important">$<c:out value="${cartItem.phone.price}"/></td>
                     <td style="vertical-align: middle!important">
-                        <spring:input path="itemsForUpdate['${cartItem.phone.id}']" value="${cartItem.quantity}"/><br>
-                        <spring:errors path="itemsForUpdate" cssStyle="color : red"/>
+                        <spring:input path="itemsForUpdate['${cartItem.phone.id}']" type="number" class="form-control" value="${cartItem.quantity}"/><br>
+                        <spring:errors path="itemsForUpdate['${cartItem.phone.id}']" cssStyle="color : red"/>
                     </td>
                     <td class="text-center" style="vertical-align: middle!important">
                         <c:url value="/cart/delete/${cartItem.phone.id}" var="deletePhoneUrl"/>
