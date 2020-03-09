@@ -46,7 +46,7 @@
                 </tr>
             </tbody>
         </table>
-        <spring:form method="post" action="/order" modelAttribute="info">
+        <spring:form method="post" action="${pageContext.request.contextPath}/order" modelAttribute="info">
             First name: <spring:input path="firstName"/><br>
                         <spring:errors path="firstName"/><br>
             Last name: <spring:input path="lastName"/><br>

@@ -1,10 +1,12 @@
 package com.es.phoneshop.web.controller.pages;
 
-import com.es.core.cart.Cart;
 import com.es.core.cart.CartItemDTOWrapper;
 import com.es.core.cart.CartService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,6 +18,14 @@ public class CartPageController {
     @Resource
     private CartService cartService;
 
+    @Resource(name = "quantityValidator")
+    private Validator validator;
+
+    @InitBinder("updateForm")
+    private void initBinder(WebDataBinder binder){
+        binder.addValidators(validator);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getCart(ModelAndView modelAndView) {
         modelAndView.setViewName("cart");
@@ -25,11 +35,14 @@ public class CartPageController {
     }
 
     @PostMapping
-    public ModelAndView updateCart(@ModelAttribute(name = "updateForm") CartItemDTOWrapper itemsForUpdate, ModelAndView modelAndView, BindingResult bindingResult) {
-        modelAndView.setViewName("redirect:/cart");
+    public ModelAndView updateCart(@Validated @ModelAttribute(name = "updateForm")CartItemDTOWrapper itemsForUpdate, BindingResult bindingResult, ModelAndView modelAndView) {
         if(!bindingResult.hasErrors()){
             cartService.update(itemsForUpdate);
+            modelAndView.setViewName("redirect:/cart");
+            return modelAndView;
         }
+        modelAndView.setViewName("cart");
+        modelAndView.addObject("cart", cartService.getCart());
         return modelAndView;
     }
 

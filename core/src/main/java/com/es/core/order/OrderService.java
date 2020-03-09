@@ -4,6 +4,7 @@ import com.es.core.cart.Cart;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderDTO;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
@@ -11,4 +12,6 @@ public interface OrderService {
     Long placeOrder(Order order) throws OutOfStockException;
     Optional<Order> getOrder(Long id);
     void setPersonalInfo(Order order, OrderDTO orderDTO);
+    List<Order> findAll();
+    void updateStatus(String statusValue, Long id);
 }

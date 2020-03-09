@@ -17,7 +17,7 @@ import java.util.Optional;
 @Component
 public class JdbcOrderDao implements OrderDao {
     private final static String SELECT_ORDER_QUERY = "select orders.id AS orderId, subtotal, deliveryPrice," +
-            "totalPrice, firstName, lastName, deliveryAddress, contactPhoneNo," +
+            "totalPrice, firstName, lastName, deliveryAddress, contactPhoneNo, status," +
             "orderItems.id AS orderItemId, quantity," +
             "phones.id AS phoneId, brand, model, price, displaySizeInches, weightGr, lengthMm," +
             "widthMm, heightMm, announced, deviceType, os, displayResolution, " +
@@ -30,8 +30,22 @@ public class JdbcOrderDao implements OrderDao {
             "left join phone2color on phones.id = phone2color.phoneId " +
             "left join colors on colors.id = phone2color.colorId " +
             "where orders.id = ?";
+    private final static String SELECT_ALL_ORDERS_QUERY = "select orders.id AS orderId, subtotal, deliveryPrice," +
+            "totalPrice, firstName, lastName, deliveryAddress, contactPhoneNo, status," +
+            "orderItems.id AS orderItemId, quantity," +
+            "phones.id AS phoneId, brand, model, price, displaySizeInches, weightGr, lengthMm," +
+            "widthMm, heightMm, announced, deviceType, os, displayResolution, " +
+            "pixelDensity, displayTechnology, backCameraMegapixels, " +
+            "frontCameraMegapixels, ramGb, internalStorageGb, batteryCapacityMah, " +
+            "talkTimeHours, standByTimeHours, bluetooth, positioning, imageUrl, " +
+            "description, colors.id AS colorId, colors.code AS colorCode from orders " +
+            "left join orderItems on orders.id = orderItems.orderId " +
+            "left join phones on phones.id = orderItems.phoneId " +
+            "left join phone2color on phones.id = phone2color.phoneId " +
+            "left join colors on colors.id = phone2color.colorId";
     private final static String INSERT_ORDER_QUERY = "insert into orders (subtotal, deliveryPrice, totalPrice, firstName, lastName, deliveryAddress, contactPhoneNo) values (:subtotal, :deliveryPrice, :totalPrice, :firstName, :lastName, :deliveryAddress, :contactPhoneNo)";
     private final static String INSERT_ORDER_ITEMS_QUERY = "insert into orderItems (orderId, phoneId, quantity) values (:orderId, :phoneId, :quantity)";
+    private final static String UPDATE_STATUS_QUERY = "update orders set status = ? where id = ?";
     @Resource
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Resource
@@ -55,6 +69,16 @@ public class JdbcOrderDao implements OrderDao {
         return (Long) keyHolder.getKey();
     }
 
+    @Override
+    public List<Order> findAll() {
+        return jdbcTemplate.query(SELECT_ALL_ORDERS_QUERY, new OrderListResultSetExtractor());
+    }
+
+    @Override
+    public void updateStatus(OrderStatus orderStatus, Long id) {
+        jdbcTemplate.update(UPDATE_STATUS_QUERY, orderStatus.toString(), id);
+    }
+
     private SqlParameterSource getParameters(Order order){
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("subtotal", order.getSubtotal());
@@ -64,6 +88,7 @@ public class JdbcOrderDao implements OrderDao {
         namedParameters.addValue("lastName", order.getLastName());
         namedParameters.addValue("deliveryAddress", order.getDeliveryAddress());
         namedParameters.addValue("contactPhoneNo", order.getContactPhoneNo());
+        namedParameters.addValue("status", order.getStatus());
         return namedParameters;
     }
 

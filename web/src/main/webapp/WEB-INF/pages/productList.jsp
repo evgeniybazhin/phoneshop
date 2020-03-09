@@ -29,6 +29,7 @@
     <input type="hidden" name="search" value=""/>
     <input type="hidden" name="sortBy" id=""/>
 </form>
+<jsp:include page="../template/templateSec.jsp"/>
 <div class="bg-light w-100">
     <div class="container p-3">
         <div class="page-header text-primary">

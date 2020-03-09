@@ -32,7 +32,7 @@ public class JdbcPhoneDao implements PhoneDao {
             ":announced, :deviceType, :os, :displayResolution, :pixelDensity, :displayTechnology, :backCameraMegapixels, :frontCameraMegapixels," +
             ":ramGb, :internalStorageGb, :batteryCapacityMah, :talkTimeHours, :standByTimeHours, :bluetooth, :positioning, :imageUrl, :description)";
     private static final String SQL_GET_PHONE = "select * from phones where id = ";
-    private static final String SQL_GET_COUNT = "select count(*) from phones";
+    private static final String SQL_GET_COUNT = "select count(*) from (SELECT * FROM (SELECT * FROM phones where price > 0) LEFT JOIN stocks ON id = phoneId WHERE stock > 0 )";
 
     public Optional<Phone> getById(final Long id) {
         Phone phone;
