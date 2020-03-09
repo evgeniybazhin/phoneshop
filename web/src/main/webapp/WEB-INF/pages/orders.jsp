@@ -27,7 +27,7 @@
             <tbody>
             <c:forEach var="order" items="${orders}">
                 <tr>
-                    <td style="vertical-align: middle!important"><a href="/admin/orders/${order.id}"><c:out value="${order.id}"/></a></td>
+                    <td style="vertical-align: middle!important"><a href="${pageContext.request.contextPath}/admin/orders/${order.id}"><c:out value="${order.id}"/></a></td>
                     <td style="vertical-align: middle!important"><c:out value="${order.firstName}"/> <c:out value="${order.lastName}"/></td>
                     <td style="vertical-align: middle!important">$<c:out value="${order.contactPhoneNo}"/></td>
                     <td style="vertical-align: middle!important"><c:out value="${order.deliveryAddress}"/></td>
