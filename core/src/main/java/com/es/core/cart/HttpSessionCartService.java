@@ -4,6 +4,7 @@ import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.phone.Stock;
 import com.es.core.model.phone.StockDao;
+import com.es.core.model.quickOrder.QuickOrder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,6 +39,36 @@ public class HttpSessionCartService implements CartService {
             updateQuantity(phoneId, quantity);
         }
         repriceOrder();
+    }
+
+    @Override
+    public List<Phone> addPhone(QuickOrder quickOrder) {
+        Map<Long, Long> itemsToRemove = new HashMap<>();
+        List<Phone> returnItems = new ArrayList<>();
+        Map<Long, Long> quickOrderItems = quickOrder.getQuickOrderItems();
+        for(Map.Entry<Long, Long> item : quickOrderItems.entrySet()){
+            Long id = item.getKey();
+            Long quantity = item.getValue();
+            Optional<Phone> phone = phoneDao.getById(id);
+            if(quantity == null || quantity <= 0 || stockDao.getCountInStock(id).getStock() < quantity){
+                returnItems.add(phone.get());
+                continue;
+            }
+            if(phone.isPresent()){
+                CartItem cartItem = new CartItem(phone.get(), quantity);
+                cart.getCartItems().add(cartItem);
+                itemsToRemove.put(id, quantity);
+            }
+        }
+        if(!itemsToRemove.isEmpty()){
+            for(Map.Entry<Long, Long> item : itemsToRemove.entrySet()){
+                if(quickOrderItems.containsKey(item.getKey())){
+                    quickOrderItems.remove(item.getKey());
+                }
+            }
+        }
+        repriceOrder();
+        return returnItems;
     }
 
     private boolean isAddedPhone(Long phoneId){
